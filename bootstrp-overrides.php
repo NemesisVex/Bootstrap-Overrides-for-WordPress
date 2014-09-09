@@ -1,10 +1,10 @@
 <?php
 /*
   Plugin Name: Bootstrap Overrides
-  Plugin URI: http://vigilantmedia.com/projects/
+  Plugin URI: https://bitbucket.org/NemesisVex/bootstrap-overrides-for-wordpress
   Description: This plugin overrides a number of functions in wp-includes to accommodate Bootstrap classes. Of course, any changes to these functions in Core will not be reflected.
   Author: Greg Bueno
-  Version: 0.01
+  Version: 1.0.1
   Author URI: http://vigilantmedia.com/
  */
 
