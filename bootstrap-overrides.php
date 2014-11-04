@@ -431,3 +431,83 @@ if (! function_exists( 'bootstrap_paginate_links' )) {
 		return $r;
 	}
 }
+
+if ( !function_exists( 'bootstrap_page_menu' ) ) {
+	/**
+	 * bootstrap_page_menu
+	 *
+	 * bootstrap_page_menu overrides wp_page_menu to allow for Bootstrap markup.
+	 *
+	 * @param mixed $args Arguments also accepted by wp_page_menu
+	 * @return mixed
+	 */
+	function bootstrap_page_menu( $args = array() ) {
+		$defaults = array('sort_column' => 'menu_order, post_title', 'menu_class' => 'menu', 'echo' => true, 'link_before' => '', 'link_after' => '', 'container' => 'div', 'container_class' => '', 'container_id' => '', 'menu_class' => '', 'menu_id' => '');
+		$args = wp_parse_args( $args, $defaults );
+
+		/**
+		 * Filter the arguments used to generate a page-based menu.
+		 *
+		 * @since 2.7.0
+		 *
+		 * @see wp_page_menu()
+		 *
+		 * @param array $args An array of page menu arguments.
+		 */
+		$args = apply_filters( 'wp_page_menu_args', $args );
+
+		$menu = '';
+
+		$list_args = $args;
+
+		// Show Home in the menu
+		if ( ! empty($args['show_home']) ) {
+			if ( true === $args['show_home'] || '1' === $args['show_home'] || 1 === $args['show_home'] )
+				$text = __('Home');
+			else
+				$text = $args['show_home'];
+			$class = '';
+			if ( is_front_page() && !is_paged() )
+				$class = 'class="current_page_item active"';
+			$menu .= '<li ' . $class . '><a href="' . home_url( '/' ) . '">' . $args['link_before'] . $text . $args['link_after'] . '</a></li>';
+			// If the front page is a page, add it to the exclude list
+			if (get_option('show_on_front') == 'page') {
+				if ( !empty( $list_args['exclude'] ) ) {
+					$list_args['exclude'] .= ',';
+				} else {
+					$list_args['exclude'] = '';
+				}
+				$list_args['exclude'] .= get_option('page_on_front');
+			}
+		}
+
+		$list_args['echo'] = false;
+		$list_args['title_li'] = '';
+		$menu .= str_replace( array( "\r", "\n", "\t" ), '', wp_list_pages($list_args) );
+
+		if ( $menu )
+			$menu = '<ul class="' . esc_attr($args['menu_class']) . '">' . $menu . '</ul>';
+
+		if ( $args['container'] !== false) {
+			$menu = '<div id="' . esc_attr($args['container_id']) . '" class="' . esc_attr($args['container_class']) . '">' . $menu . "</div>\n";
+		}
+
+
+		/**
+		 * Filter the HTML output of a page-based menu.
+		 *
+		 * @since 2.7.0
+		 *
+		 * @see wp_page_menu()
+		 *
+		 * @param string $menu The HTML output.
+		 * @param array  $args An array of arguments.
+		 */
+		$menu = apply_filters( 'wp_page_menu', $menu, $args );
+		if ( $args['echo'] )
+			echo $menu;
+		else
+			return $menu;
+	}
+}
+
